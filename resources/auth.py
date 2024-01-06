@@ -2,7 +2,7 @@ from flask_smorest import Blueprint, abort
 from flask.views import MethodView
 from sqlalchemy.exc import SQLAlchemyError
 from passlib.hash import pbkdf2_sha256
-from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt, jwt_required
+from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt, jwt_required, get_jwt_identity
 
 from schema import AuthSchema
 from models import UserModel, BlockListModel
@@ -58,4 +58,14 @@ class Login(MethodView):
       return {"message": "Logged out successfully"}
     except SQLAlchemyError as e:
       abort(500, str(e))
+    
+
+@blp.route('/auth/refresh')
+class Refresh(MethodView):
+  
+  @jwt_required(refresh=True)
+  def post(self):
+    return {
+      "access_token": create_access_token(get_jwt_identity(), fresh=False),
+    }
     

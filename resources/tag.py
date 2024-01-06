@@ -71,7 +71,7 @@ class Tag(MethodView):
     return tag
   
 
-  @jwt_required()
+  @jwt_required(fresh=True)
   def delete(self, tagId):
     tag = TagModel.query.get_or_404(tagId)
     try:

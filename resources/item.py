@@ -60,7 +60,7 @@ class Item(MethodView):
       abort(500, message=str(e))
   
 
-  @jwt_required()
+  @jwt_required(fresh=True)
   def delete(self, itemId):
     item = ItemModel.query.get_or_404(itemId)
     try:

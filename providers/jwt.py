@@ -15,6 +15,15 @@ def provideJwtConfig(app):
         401,
       )
     
+    @jwt.needs_fresh_token_loader
+    def need_fresh_token_cb(jwtHeader, jwtPayload):
+      return (
+        jsonify(
+           {"message":"The token is not fresh", "error": "fresh_token_required"}
+        ), 
+        401,
+      )
+    
     @jwt.invalid_token_loader
     def invalid_token_cb(error):
       return (

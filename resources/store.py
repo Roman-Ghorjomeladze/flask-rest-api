@@ -20,7 +20,7 @@ class StoreList(MethodView):
     except SQLAlchemyError as e:
       abort(500, message=str(e))
   
-  
+
   @jwt_required()
   @blp.arguments(StoreSchema)
   @blp.response(201, StoreSchema)
@@ -57,7 +57,7 @@ class Store(MethodView):
       abort(500, message=str(e))
 
 
-  @jwt_required()
+  @jwt_required(fresh=True)
   def delete(self, storeId):
     store = StoreModel.query.get_or_404(storeId)
     try:
