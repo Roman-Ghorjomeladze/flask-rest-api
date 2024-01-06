@@ -1,6 +1,7 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError
+from flask_jwt_extended import jwt_required
 
 from schema import StoreSchema
 from models import StoreModel
@@ -19,7 +20,8 @@ class StoreList(MethodView):
     except SQLAlchemyError as e:
       abort(500, message=str(e))
   
-
+  
+  @jwt_required()
   @blp.arguments(StoreSchema)
   @blp.response(201, StoreSchema)
   def post(self, body):
@@ -41,6 +43,7 @@ class Store(MethodView):
     return store
 
 
+  @jwt_required()
   @blp.arguments(StoreSchema)
   @blp.response(200, StoreSchema)
   def put(self, body, storeId):
@@ -54,6 +57,7 @@ class Store(MethodView):
       abort(500, message=str(e))
 
 
+  @jwt_required()
   def delete(self, storeId):
     store = StoreModel.query.get_or_404(storeId)
     try:

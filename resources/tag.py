@@ -1,7 +1,7 @@
 from flask_smorest import Blueprint, abort
 from flask.views import MethodView
 from sqlalchemy.exc import SQLAlchemyError
-
+from flask_jwt_extended import jwt_required
 from models import TagModel
 from models import StoreModel, ItemModel
 from schema import TagSchema, ItemSchema
@@ -15,7 +15,8 @@ class ListTags(MethodView):
     tags = store.tags.all()
     return tags
   
-  
+
+  @jwt_required()
   @blp.arguments(TagSchema)
   @blp.response(201, TagSchema)
   def post(self, body, storeId):
@@ -31,6 +32,7 @@ class ListTags(MethodView):
 @blp.route("/item/<string:itemId>/tag/<string:tagId>")
 class LinkTagsToItem(MethodView):
 
+  @jwt_required()
   @blp.response(200, ItemSchema)
   def post(self, itemId, tagId):
     item = ItemModel.query.get_or_404(itemId)
@@ -46,6 +48,7 @@ class LinkTagsToItem(MethodView):
       abort(500, message=str(e))
 
 
+  @jwt_required()
   @blp.response(200, ItemSchema)
   def delete(self, itemId, tagId):
     item = ItemModel.query.get_or_404(itemId)
@@ -68,6 +71,7 @@ class Tag(MethodView):
     return tag
   
 
+  @jwt_required()
   def delete(self, tagId):
     tag = TagModel.query.get_or_404(tagId)
     try:
